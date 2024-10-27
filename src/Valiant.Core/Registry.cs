@@ -54,8 +54,8 @@ public static class Registry
             services.AddTransient<DiscordRestClient>();
             services.AddSingleton(_ => new DiscordSocketClient(new()
             {
-                AlwaysDownloadUsers = false,
-                GatewayIntents = GatewayIntents.All,
+                AlwaysDownloadUsers = true,
+                GatewayIntents = Constants.ConfiguredIntents,
                 LogLevel = LogSeverity.Verbose,
                 MessageCacheSize = 0,
                 SuppressUnknownDispatchWarnings = true
@@ -71,7 +71,8 @@ public static class Registry
             services.AddSingleton(new CommandService(new()
             {
                 DefaultRunMode = Discord.Commands.RunMode.Async,
-                LogLevel = LogSeverity.Verbose
+                LogLevel = LogSeverity.Verbose,
+                CaseSensitiveCommands = false
             }));
         });
 
