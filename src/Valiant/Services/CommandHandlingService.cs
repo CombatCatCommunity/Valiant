@@ -48,7 +48,7 @@ public class CommandHandlingService : IHostedService
         if (message is not SocketUserMessage msg)
             return;
         int argPos = 0;
-        if (!msg.HasStringPrefix("vally!", ref argPos))
+        if (!msg.HasStringPrefix(Constants.ValiantPrefix, ref argPos, StringComparison.InvariantCultureIgnoreCase))
             return;
 
         try
