@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using Valiant.Converters;
 using Valiant.Utility;
 
 namespace Valiant.Services;
@@ -33,6 +34,10 @@ public class InteractionHandlingService : IHostedService
     {
         _discord.Ready += () => _interactions.RegisterCommandsGloballyAsync(true);
         _discord.InteractionCreated += OnInteractionAsync;
+
+        _interactions.AddComponentTypeConverter<StringTime>(new StringTimeComponentConverter());
+        _interactions.AddTypeConverter<StringTime>(new StringTimeConverter());
+        _interactions.AddTypeReader<StringTime>(new StringTimeTypeReader());
 
         await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
     }
