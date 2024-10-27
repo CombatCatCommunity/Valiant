@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Valiant;
 using Valiant.Services;
 using ZLogger;
+using ZLogger.Formatters;
 using ZLogger.Providers;
 
 using var host = Host.CreateDefaultBuilder(args)
@@ -15,18 +16,22 @@ using var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
     {
         logging.ClearProviders();
+        logging.SetMinimumLevel(LogLevel.Debug);
+        logging.AddFilter((provider, category, level) =>
+        {
+            if (category.Contains("HttpClientFactory") &&
+                category.Contains("Microsoft") &&
+                level == LogLevel.Debug)
+                return false;
+            return true;
+        });
         logging.AddZLoggerConsole(options =>
         {
-            options.UsePlainTextFormatter(formatter =>
-            {
-                formatter.SetPrefixFormatter($"{0} [{1}] {2}:\t", (in MessageTemplate template, in LogInfo info) => template.Format(info.Timestamp, info.LogLevel.ToString().Substring(0, 4), info.Category));
-                formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
-
-            });
+            options.UsePlainTextFormatter(f => ConfigureZFormatter(f));
         });
-        logging.SetMinimumLevel(LogLevel.Debug);
         logging.AddZLoggerRollingFile(rolling =>
         {
+            rolling.UsePlainTextFormatter(f => ConfigureZFormatter(f));
             rolling.FilePathSelector = (dt, x) => $"logs/{dt.ToLocalTime():yyyy-MM-dd}_{x:000}.log";
             rolling.RollingInterval = RollingInterval.Day;
             rolling.RollingSizeKB = 1024;
@@ -39,9 +44,10 @@ using var host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<DiscordStartupService>();
 
         //services.AddHostedService<AttachmentProcessor>();
-        services.AddHostedService<TwitchWatcher>();
-        services.AddSingleton(x => x.GetRequiredService<TwitchWatcher>());
+        //services.AddHostedService<TwitchBGScanner>();
+        services.AddSingleton(x => x.GetRequiredService<TwitchBGScanner>());
 
+        services.AddHostedService<StickyRolesService>();
         services.AddHostedService<InteractionHandlingService>();
         services.AddHostedService<CommandHandlingService>();
         services.AddHttpClient();
@@ -51,3 +57,12 @@ using var host = Host.CreateDefaultBuilder(args)
 //Registry.FillFaqDb();
 
 await host.RunAsync();
+
+
+static PlainTextZLoggerFormatter ConfigureZFormatter(PlainTextZLoggerFormatter formatter)
+{
+    formatter.SetPrefixFormatter($"{0} [{1}] {2}:\t", (in MessageTemplate template, in LogInfo info) 
+        => template.Format(info.Timestamp, info.LogLevel.ToString().Substring(0, 4), info.Category));
+    formatter.SetExceptionFormatter((writer, ex) => Utf8StringInterpolation.Utf8String.Format(writer, $"{ex.Message}"));
+    return formatter;
+}
