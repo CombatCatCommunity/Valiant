@@ -9,12 +9,14 @@ using ZLogger;
 
 namespace Valiant.Services;
 
-public class StickyRolesService(DiscordSocketClient discord, ILogger<StickyRolesService> logger) : IHostedService
+public class StickyRolesService(DiscordSocketClient discord, ILogger<StickyRolesService> logger) : IHostedService, IDisposable
 {
     private readonly DiscordSocketClient _discord = discord;
     private readonly ILogger _logger = logger;
 
     private readonly LiteDatabase _db = new("Filename=./data/stickyroles.db;Connection=shared");
+
+    public void Dispose() => _db.Dispose();
 
     public Task StartAsync(CancellationToken cancellationToken)
     {

@@ -17,14 +17,6 @@ using var host = Host.CreateDefaultBuilder(args)
     {
         logging.ClearProviders();
         logging.SetMinimumLevel(LogLevel.Debug);
-        logging.AddFilter((provider, category, level) =>
-        {
-            if (category.Contains("HttpClientFactory") &&
-                category.Contains("Microsoft") &&
-                level == LogLevel.Debug)
-                return false;
-            return true;
-        });
         logging.AddZLoggerConsole(options =>
         {
             options.UsePlainTextFormatter(f => ConfigureZFormatter(f));
@@ -42,19 +34,13 @@ using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddHostedService<DiscordStartupService>();
-
-        //services.AddHostedService<AttachmentProcessor>();
-        //services.AddHostedService<TwitchBGScanner>();
-        services.AddSingleton(x => x.GetRequiredService<TwitchBGScanner>());
-
         services.AddHostedService<StickyRolesService>();
+        //services.AddHostedService<NoPingService>();
+        //services.AddHostedService<LocaleDirectorService>();
         services.AddHostedService<InteractionHandlingService>();
         services.AddHostedService<CommandHandlingService>();
-        services.AddHttpClient();
     })
     .Build();
-
-//Registry.FillFaqDb();
 
 await host.RunAsync();
 

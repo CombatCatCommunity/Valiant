@@ -2,21 +2,15 @@
 
 public struct StringTime(TimeSpan Value)
 {
-    public static bool TryParse(string value, out StringTime time)
-    {
-        time = default;
-        try
-        {
-            time = Parse(value);
-            return true;
-        } catch
-        {
-            return false;
-        }
-    }
     public static StringTime Parse(string value)
     {
-        // Assuming 30d24h60m60s
+        if (TryParse(value, out var result))
+            return result;
+        throw new ArgumentException("Invalid string time format.", paramName: nameof(value));
+    }
+    public static bool TryParse(string value, out StringTime time)
+    {
+        // Assuming 2y1w30d24h60m60s
 
         var result = TimeSpan.Zero;
         string numpart = "";
@@ -24,17 +18,20 @@ public struct StringTime(TimeSpan Value)
         {
             if (!char.IsLetter(c))
             {
+                // Final value did not have a time indicator
                 if (value.Last() == c)
-                    throw new ArgumentException($"Final value did not have a time indicator");
+                    return false;
 
                 numpart += c;
                 continue;
             }
+            // Time indicators cannot have multiple characters
+            if (string.IsNullOrWhiteSpace(numpart)) 
+                return false;
 
-            if (string.IsNullOrWhiteSpace(numpart))
-                throw new ArgumentException("Time indicators cannot have multiple characters");
+            // Value of numpart is not a valid duration number
             if (!double.TryParse(numpart.Trim(), out double timeValue))
-                throw new ArgumentException($"Value of `{numpart}` is not a valid duration number");
+                return false;
 
             result = c switch
             {
@@ -44,11 +41,12 @@ public struct StringTime(TimeSpan Value)
                 'h' => result.Add(TimeSpan.FromHours(timeValue)),
                 'm' => result.Add(TimeSpan.FromMinutes(timeValue)),
                 's' => result.Add(TimeSpan.FromSeconds(timeValue)),
-                _ => throw new ArgumentException($"Value of `{c}` is not a valid time indicator"),
+                _ => TimeSpan.Zero
             };
             numpart = "";
         }
 
-        return new StringTime(result);
+        time = new StringTime(result);
+        return true;
     }
 }

@@ -5,15 +5,16 @@ using LiteDB;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Valiant.Models;
+using ZLogger;
 
 namespace Valiant.Services;
 
-public class TwitchWatcher : BackgroundService
+public class TwitchBGScanner : BackgroundService
 {
     public const int ViewerThreshold = 50;
     public int TotalChecks => _totalChecks;
 
-    private readonly ILogger<TwitchWatcher> _logger;
+    private readonly ILogger<TwitchBGScanner> _logger;
     private readonly DiscordSocketClient _discord;
     private readonly TwitchRestClient _twitch;
     private readonly LiteDatabase _db;
@@ -24,7 +25,7 @@ public class TwitchWatcher : BackgroundService
 
     private SocketTextChannel _channel;
 
-    public TwitchWatcher(ILogger<TwitchWatcher> logger, DiscordSocketClient discord, TwitchRestClient twitch)
+    public TwitchBGScanner(ILogger<TwitchBGScanner> logger, DiscordSocketClient discord, TwitchRestClient twitch)
     {
         _logger = logger;
         _discord = discord;
@@ -45,7 +46,7 @@ public class TwitchWatcher : BackgroundService
         if (_twitch.Identity == null)
         {
             await _twitch.ValidateAsync();
-            _logger.LogInformation("Twitch authenticated");
+            _logger.ZLogInformation($"Twitch authenticated");
         }
         using var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
 
@@ -56,7 +57,7 @@ public class TwitchWatcher : BackgroundService
             {
                 if (_channel == null)
                 {
-                    _logger.LogInformation("Log channel was null, skipping.");
+                    _logger.ZLogInformation($"Log channel was null, skipping.");
                     continue;
                 }
 
@@ -64,7 +65,7 @@ public class TwitchWatcher : BackgroundService
                     await SendStatsAsync();
 
                 _totalChecks++;
-                _logger.LogInformation("Starting check #" + _totalChecks);
+                _logger.ZLogInformation($"Starting check #{_totalChecks}");
 
                 var results = await _twitch.GetBroadcastsAsync(gameIds: [Constants.WildAssaultTwitchId], count: int.MaxValue).FlattenAsync();
 
@@ -83,7 +84,7 @@ public class TwitchWatcher : BackgroundService
                 var newlyDetected = aboveThreshold.Select(x => x.Id).Except(_alreadyNotified ?? []);
                 if (!newlyDetected.Any())
                 {
-                    _logger.LogInformation("No new streams detected, skipping.");
+                    _logger.ZLogInformation($"No new streams detected, skipping.");
                     continue;
                 }
 
@@ -102,14 +103,14 @@ public class TwitchWatcher : BackgroundService
 
             } catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.ZLogError(ex, $"{ex.Message}");
             }
         }
     }
 
     public async Task SendStatsAsync()
     {
-        _logger.LogInformation("Outputting ShawnStats");
+        _logger.ZLogInformation($"Outputting ShawnStats");
         _statsSentForDay = DateTime.UtcNow.DayOfYear;
 
         var stats = _db.GetCollection<TwitchStats>().Query()

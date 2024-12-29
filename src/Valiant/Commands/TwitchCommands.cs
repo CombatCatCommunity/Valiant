@@ -1,13 +1,36 @@
 ﻿using Discord;
 using Discord.Commands;
 using LiteDB;
+using System.Text;
 using Valiant.Models;
 
 namespace Valiant.Commands;
 
+[Group("twitch")]
 public class TwitchCommands : ModuleBase<SocketCommandContext>
 {
-    [Command("forcetwitchstats")]
+    [Command("export")]
+    [RequireUserPermission(GuildPermission.Administrator)]
+    public async Task ExportAsync()
+    {
+        using var db = new LiteDatabase("Filename=./data/twitch.db;ReadOnly=true");
+        var stats = db.GetCollection<TwitchStats>().Query().ToArray();
+
+        var builder = new StringBuilder("Timestamp,StreamerCount,TotalViewers,PopularStreamName,PopularStreamViewerCount\n");
+        foreach (var s in stats)
+            builder.AppendLine($"{s.Timestamp},{s.StreamerCount},{s.TotalViewers},{s.MostPopularChannel.Name},{s.MostPopularChannel.ViewerCount}");
+
+        using var memory = new MemoryStream();
+        using var writer = new StreamWriter(memory);
+
+        await writer.WriteAsync(builder.ToString());
+        await writer.FlushAsync();
+        memory.Position = 0;
+
+        await Context.Channel.SendFileAsync(memory, "twitch_stats.csv", $"Found {stats.Count()} stat(s) to export");
+    }
+
+    [Command("forcestats")]
     [RequireUserPermission(GuildPermission.Administrator)]
     public async Task ForceTwitchStatsAsync()
     {

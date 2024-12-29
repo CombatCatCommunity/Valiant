@@ -8,9 +8,11 @@ namespace Valiant.Commands;
 [Group("stickyroles")]
 [RequireUserPermission(GuildPermission.ManageRoles)]
 [RequireBotPermission(GuildPermission.ManageRoles)]
-public class StickyRolesCommands : ModuleBase<SocketCommandContext>
+public class StickyRolesCommands : ModuleBase<SocketCommandContext>, IDisposable
 {
     private readonly LiteDatabase _db = new("Filename=./data/stickyroles.db;Connection=shared");
+
+    public void Dispose() => _db.Dispose();
 
     [Command]
     public async Task ListAsync()

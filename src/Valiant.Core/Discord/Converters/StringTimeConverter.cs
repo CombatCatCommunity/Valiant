@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.Interactions;
 
 namespace Valiant.Converters;
@@ -34,6 +35,12 @@ public class StringTimeTypeReader : TypeReader<StringTime>
         }
         catch (Exception ex)
         {
+            if (DateTime.TryParse(option, out var datetime))
+            {
+                if (datetime > DateTime.Now)
+                    return Task.FromResult(TypeConverterResult.FromSuccess(datetime - DateTime.Now));
+            }
+
             return Task.FromResult(TypeConverterResult.FromError(ex));
         }
     }

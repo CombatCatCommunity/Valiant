@@ -1,0 +1,62 @@
+{
+  "ocr": {
+    "name": "ocr",
+    "description": "Forzar la ejecución de OCR para un mensaje específico",
+    "message-url": {
+      "name": "message-url",
+      "description": "Un enlace al mensaje con archivos adjuntos para leer."
+    },
+    "index": {
+      "name": "index",
+      "description": "Seleccione una imagen específica si hay varias en un solo mensaje."
+    }
+  },
+  "faq": {
+    "name": "faq",
+    "description": "Busque respuestas a preguntas frecuentes.",
+    "faq_id": {
+      "name": "faq_id",
+      "description": "faqId"
+    },
+    "mention": {
+      "name": "mention",
+      "description": "Un usuario para mencionar"
+    }
+  },
+  "reminder": {
+    "name": "reminder",
+    "description": "Haz que el bot te recuerde algo después de un cierto tiempo",
+    "add": {
+      "name": "add",
+      "description": "Agregar un nuevo recordatorio",
+      "time": {
+        "name": "time",
+        "description": "time"
+      },
+      "message": {
+        "name": "message",
+        "description": "message"
+      }
+    },
+    "list": {
+      "name": "list",
+      "description": "Enumere todos sus recordatorios próximos"
+    }
+  },
+  "sendmessage": {
+    "name": "sendmessage",
+    "description": "Hacer que el bot envíe un mensaje",
+    "content": {
+      "name": "content",
+      "description": "content"
+    },
+    "channel": {
+      "name": "channel",
+      "description": "channel"
+    },
+    "reply-msg-id": {
+      "name": "reply-msg-id",
+      "description": "replyMsgId"
+    }
+  }
+}

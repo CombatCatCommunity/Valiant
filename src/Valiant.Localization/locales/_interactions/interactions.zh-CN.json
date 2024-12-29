@@ -1,0 +1,62 @@
+{
+  "ocr": {
+    "name": "ocr",
+    "description": "强制对特定邮件运行 OCR",
+    "message-url": {
+      "name": "消息网址",
+      "description": "带有要阅读的附件的邮件链接"
+    },
+    "index": {
+      "name": "指数",
+      "description": "如果一条消息中有多张图片，请选择一张特定的图片。"
+    }
+  },
+  "faq": {
+    "name": "常问问题",
+    "description": "搜索常见问题的答案。",
+    "faq_id": {
+      "name": "faq_id",
+      "description": "faqId"
+    },
+    "mention": {
+      "name": "提到",
+      "description": "提及的用户"
+    }
+  },
+  "reminder": {
+    "name": "提醒",
+    "description": "让机器人在一定时间后提醒你某件事",
+    "add": {
+      "name": "添加",
+      "description": "添加新提醒",
+      "time": {
+        "name": "时间",
+        "description": "等待提醒需要多长时间"
+      },
+      "message": {
+        "name": "信息",
+        "description": "您希望收到的提醒消息"
+      }
+    },
+    "list": {
+      "name": "列表",
+      "description": "列出所有即将到来的提醒"
+    }
+  },
+  "sendmessage": {
+    "name": "发送消息",
+    "description": "让机器人发送消息",
+    "content": {
+      "name": "内容",
+      "description": "要发送的消息的内容"
+    },
+    "channel": {
+      "name": "聊天频道",
+      "description": "消息发送到哪里"
+    },
+    "reply-msg-id": {
+      "name": "回复",
+      "description": "要回复的消息的 id"
+    }
+  }
+}
