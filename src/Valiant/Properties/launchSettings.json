@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Valiant": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
