@@ -3,48 +3,29 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
-using Valiant.Converters;
-using Valiant.Utility;
+using Valiant.Interactions.Fun;
 
 namespace Valiant.Services;
 
-public class InteractionHandlingService : IHostedService
-{
-    private readonly DiscordSocketClient _discord;
-    private readonly InteractionService _interactions;
-    private readonly IServiceProvider _services;
-    private readonly ILogger _logger;
-
-    public InteractionHandlingService(
+public class InteractionHandlingService(
         DiscordSocketClient discord,
         InteractionService interactions,
         IServiceProvider services,
-        ILogger<InteractionHandlingService> logger)
-    {
-        _discord = discord;
-        _interactions = interactions;
-        _services = services;
-        _logger = logger;
-
-        _interactions.Log += msg => LogHelper.OnLogAsync(_logger, msg);
-    }
-
+        ILogger<InteractionHandlingService> logger
+    ) : IHostedService
+{
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _discord.Ready += () => _interactions.RegisterCommandsGloballyAsync(true);
-        _discord.InteractionCreated += OnInteractionAsync;
+        interactions.Log += msg => LogHelper.OnLogAsync(logger, msg);
+        discord.Ready += () => interactions.RegisterCommandsGloballyAsync(true);
+        discord.InteractionCreated += OnInteractionAsync;
 
-        _interactions.AddComponentTypeConverter<StringTime>(new StringTimeComponentConverter());
-        _interactions.AddTypeConverter<StringTime>(new StringTimeConverter());
-        _interactions.AddTypeReader<StringTime>(new StringTimeTypeReader());
-
-        await _interactions.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+        await interactions.AddModuleAsync<BoostModule>(services);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _interactions.Dispose();
+        interactions.Dispose();
         return Task.CompletedTask;
     }
 
@@ -52,8 +33,8 @@ public class InteractionHandlingService : IHostedService
     {
         try
         {
-            var context = new SocketInteractionContext(_discord, interaction);
-            var result = await _interactions.ExecuteCommandAsync(context, _services);
+            var context = new SocketInteractionContext(discord, interaction);
+            var result = await interactions.ExecuteCommandAsync(context, services);
 
             if (!result.IsSuccess)
                 await interaction.RespondAsync(result.ToString(), ephemeral: true);

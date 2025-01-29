@@ -1,12 +1,15 @@
-﻿using AuxLabs.Twitch.Rest;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.Rest;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Valiant;
 
@@ -31,7 +34,7 @@ public static class Registry
                 return new InteractionService(discord, new()
                 {
                     LogLevel = LogSeverity.Verbose,
-                    LocalizationManager = new JsonLocalizationManager("locales/_interactions", "interactions")
+                    //LocalizationManager = new JsonLocalizationManager("locales/_interactions", "interactions")
                 });
             });
             services.AddSingleton(new CommandService(new()
@@ -40,24 +43,6 @@ public static class Registry
                 LogLevel = LogSeverity.Verbose,
                 CaseSensitiveCommands = false
             }));
-        });
-
-        return builder;
-    }
-
-    public static IHostBuilder AddTwitch(this IHostBuilder builder)
-    {
-        builder.ConfigureServices(services =>
-        {
-            services.AddSingleton(services =>
-            {
-                var config = services.GetRequiredService<IConfiguration>();
-                return new TwitchRestClient(new TwitchRestConfig
-                {
-                    ClientId = config["twitch:client_id"],
-                    ClientSecret = config["twitch:client_secret"]
-                });
-            });
         });
 
         return builder;
