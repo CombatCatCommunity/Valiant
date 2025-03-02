@@ -11,13 +11,14 @@ public static class Constants
 
     public const string WildAssaultTwitchId = "538724705";
     public const string WildAssaultIgdbId = "288461";
+    public static long GithubRepoId = -1;
 
     public const string DefaultCommandPrefix = "v!";
 
     // Supports up to 5 digit ids; eg #12345, #2, not #123456
     // Place trigger word at the beginning; eg issue #1, faq 7
     // First regex group should always be the id number
-    public const string InMessageCommandRegex = @"\D{,2}(\d{1,5})";
+    public const string InMessageCommandRegex = @"\D{0,2}(\d{1,5})";
 
     public const string ConnectionStringFormat = "Filename=./data/{0}.db;Connection=shared";
 

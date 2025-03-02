@@ -3,7 +3,11 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Valiant.Discord;
 using Valiant.Interactions.Fun;
+using Valiant.Interactions.Info;
+using Valiant.Models;
+using ZLogger;
 
 namespace Valiant.Services;
 
@@ -20,7 +24,12 @@ public class InteractionHandlingService(
         discord.Ready += () => interactions.RegisterCommandsGloballyAsync(true);
         discord.InteractionCreated += OnInteractionAsync;
 
+        interactions.AddTypeConverter<InfoTag>(new InfoTagTypeConverter());
+
         await interactions.AddModuleAsync<BoostModule>(services);
+        await interactions.AddModuleAsync<InfoModule>(services);
+
+        logger.ZLogInformation($"Loaded {interactions.SlashCommands.Count} slash command(s)");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
