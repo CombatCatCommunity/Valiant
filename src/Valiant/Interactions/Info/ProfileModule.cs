@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Valiant.Interactions;
-internal class FaqModule
+internal class ProfileModule
 {
 }

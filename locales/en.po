@@ -1,0 +1,9 @@
+
+
+
+#: Example String
+msgctxt This is the context of the string
+msgid "Wild Assault"
+msgid_plural "Wild Assaults"
+msgstr[0] "Wild Assault"
+msgstr[1] "Wild Assaults"

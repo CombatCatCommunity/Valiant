@@ -2,10 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Octokit;
 using Valiant;
 using Valiant.Services;
-using Valiant.Services.Info;
 using Valiant.Services.Metrics;
 using ZLogger;
 using ZLogger.Providers;
@@ -37,27 +35,27 @@ using var host = Host.CreateDefaultBuilder(args)
     .AddDiscord()
     .ConfigureServices(services =>
     {
-        services.AddSingleton(x =>
-        {
-            var config = x.GetRequiredService<IConfiguration>();
-            Constants.GithubRepoId = long.Parse(config["github:repo_id"]);
+        //services.AddSingleton(x =>
+        //{
+        //    var config = x.GetRequiredService<IConfiguration>();
+        //    Constants.GithubRepoId = long.Parse(config["github:repo_id"]);
 
-            return new GitHubClient(new ProductHeaderValue("Valiant"))
-            {
-                Credentials = new Credentials(config["github:username"], config["github:password"])
-            };
-        });
+        //    return new GitHubClient(new ProductHeaderValue("Valiant"))
+        //    {
+        //        Credentials = new Credentials(config["github:username"], config["github:password"])
+        //    };
+        //});
 
-        services.AddHostedService<DiscordStartupService>();
+        services.AddHostedService<DiscordHost>();
 
-        services.AddHostedService<EmoteTracker>();
-        services.AddHostedService<GithubIssueService>();
+        //services.AddHostedService<EmoteTracker>();
+        //services.AddHostedService<GithubIssueService>();
         //services.AddHostedService<StickyRolesService>();
         //services.AddHostedService<NoPingService>();
         //services.AddHostedService<LocaleDirectorService>();
 
-        services.AddHostedService<InteractionHandlingService>();
-        services.AddHostedService<CommandHandlingService>();
+        services.AddHostedService<InteractionsHost>();
+        services.AddHostedService<CommandsHost>();
     })
     .Build();
 

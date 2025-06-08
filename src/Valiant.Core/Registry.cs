@@ -1,15 +1,10 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.Interactions;
 using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DiscordNet = Discord.Commands;
 
 namespace Valiant;
 
@@ -37,9 +32,9 @@ public static class Registry
                     //LocalizationManager = new JsonLocalizationManager("locales/_interactions", "interactions")
                 });
             });
-            services.AddSingleton(new CommandService(new()
+            services.AddSingleton(new DiscordNet.CommandService(new()
             {
-                DefaultRunMode = Discord.Commands.RunMode.Async,
+                DefaultRunMode = DiscordNet.RunMode.Async,
                 LogLevel = LogSeverity.Verbose,
                 CaseSensitiveCommands = false
             }));

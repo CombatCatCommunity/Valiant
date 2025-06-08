@@ -11,11 +11,11 @@ using ZLogger;
 
 namespace Valiant.Services;
 
-public class InteractionHandlingService(
+public class InteractionsHost(
         DiscordSocketClient discord,
         InteractionService interactions,
         IServiceProvider services,
-        ILogger<InteractionHandlingService> logger
+        ILogger<InteractionsHost> logger
     ) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)

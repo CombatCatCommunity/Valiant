@@ -20,23 +20,23 @@ public static class LogHelper
         switch (msg.Severity)
         {
             case LogSeverity.Verbose:
-                logger.ZLogInformation($"{msg}");
+                logger.ZLogInformation($"{msg.Source}\t{msg.Message}");
                 break;
 
             case LogSeverity.Info:
-                logger.ZLogInformation($"{msg}");
+                logger.ZLogInformation($"{msg.Source}\t{msg.Message}");
                 break;
 
             case LogSeverity.Warning:
-                logger.ZLogWarning($"{msg}");
+                logger.ZLogWarning($"{msg.Source}\t{msg.Message}");
                 break;
 
             case LogSeverity.Error:
-                logger.ZLogError($"{msg}");
+                logger.ZLogError($"{msg.Source}\t{msg.Message}");
                 break;
 
             case LogSeverity.Critical:
-                logger.ZLogCritical($"{msg}");
+                logger.ZLogCritical($"{msg.Source} {msg.Message}");
                 break;
         }
         return Task.CompletedTask;

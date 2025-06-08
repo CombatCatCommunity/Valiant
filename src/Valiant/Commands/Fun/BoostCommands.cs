@@ -37,9 +37,9 @@ public class BoostCommands : ModuleBase<SocketCommandContext>, IDisposable
         await ReplyAsync(embed: embed.Build());
     }
 
-    [Command("addcolorsbyname")]
+    [Command("addcolorsbyprefix")]
     [Summary("Add colors to the booster colors selection based on a role name prefix")]
-    public async Task AddColorsByNameAsync(string prefix)
+    public async Task AddColorsByPrefixAsync(string prefix)
     {
         var matches = Context.Guild.Roles.Where(x => x.Name.ToLower().StartsWith(prefix.ToLower()));
         if (!matches.Any())
